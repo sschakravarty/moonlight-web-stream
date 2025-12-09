@@ -6,13 +6,52 @@ rustup override set nightly
 
 1. Install required system dependencies:
    sudo apt-get update
-   sudo apt-get install -y pkg-config libssl-dev
+   sudo apt-get install -y pkg-config libssl-dev nodejs npm
 
 2. Initialize git submodules (required for moonlight-common-c):
    git submodule update --init --recursive
 
-3. Build the project:
+3. Build the Rust project:
    cargo build --release
+
+4. Build the web assets:
+   cd moonlight-web/web-server
+   npm install --no-fund --no-audit
+   npm run build
+   cd ../..
+
+5. Create static files symlink:
+   ln -s moonlight-web/web-server/dist static
+
+6. Configure server:
+   - Edit server/config.json to set correct streamer_path: "./target/release/streamer"
+   - Set your credentials and network configuration
+
+7. Run the web server:
+   ./target/release/web-server
+
+# Windows WSL Configuration (for network access from other devices):
+
+8. Create/edit C:\Users\<YourUsername>\.wslconfig on Windows:
+   [wsl2]
+   networkingMode=mirrored
+   firewall=false
+   dnsTunneling=true
+   autoProxy=true
+
+9. Setup Windows firewall (run as Administrator in Command Prompt):
+   # Allow port 8080 through Windows Firewall:
+   netsh advfirewall firewall add rule name="Moonlight Web Stream" dir=in action=allow protocol=TCP localport=8080
+   
+   # OR disable Windows Firewall completely:
+   netsh advfirewall set allprofiles state off
+
+10. Restart WSL after config changes:
+    wsl --shutdown
+    # Then restart WSL/Ubuntu
+
+11. Access server from other devices:
+    http://<Windows-IP>:8080
 
 # Note: The printf-compat crate has been patched locally in ./patches/printf-compat 
 # to fix compatibility with current Rust nightly VaList API changes.

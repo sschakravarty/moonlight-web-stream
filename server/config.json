@@ -1,0 +1,33 @@
+{
+  "credentials": "mypassword",
+  "data_path": "server/data.json",
+  "bind_address": "0.0.0.0:8080",
+  "moonlight_default_http_port": 47989,
+  "pair_device_name": "roth",
+  "webrtc_ice_servers": [
+    {
+      "urls": [
+        "stun:l.google.com:19302",
+        "stun:stun.l.google.com:19302",
+        "stun:stun1.l.google.com:19302",
+        "stun:stun2.l.google.com:19302",
+        "stun:stun3.l.google.com:19302",
+        "stun:stun4.l.google.com:19302"
+      ]
+    }
+  ],
+  "webrtc_port_range": null,
+  "webrtc_nat_1to1": {
+    "ice_candidate_type" : "host",
+    "ips": [
+      "10.64.143.229"
+    ]
+  },
+  "webrtc_network_types": [
+    "udp4",
+    "udp6"
+  ],
+  "web_path_prefix": "",
+  "certificate": null,
+  "streamer_path": "./target/release/streamer"
+}
