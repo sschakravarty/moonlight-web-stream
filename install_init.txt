@@ -1,0 +1,19 @@
+sudo apt install cargo rustup
+rustup toolchain install nightly
+rustup override set nightly
+
+# Additional steps to build successfully:
+
+1. Install required system dependencies:
+   sudo apt-get update
+   sudo apt-get install -y pkg-config libssl-dev
+
+2. Initialize git submodules (required for moonlight-common-c):
+   git submodule update --init --recursive
+
+3. Build the project:
+   cargo build --release
+
+# Note: The printf-compat crate has been patched locally in ./patches/printf-compat 
+# to fix compatibility with current Rust nightly VaList API changes.
+# The patch is automatically applied via [patch.crates-io] in Cargo.toml

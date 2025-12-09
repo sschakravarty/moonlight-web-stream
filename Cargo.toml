@@ -73,6 +73,9 @@ num-traits = "0.2"
 bindgen = { version = "0.72.0" }
 cmake = { version = "0.1.54" }
 
+[patch.crates-io]
+printf-compat = { path = "./patches/printf-compat" }
+
 [workspace.lints.clippy]
 too_many_arguments = "allow"
 unwrap_used = "warn"
