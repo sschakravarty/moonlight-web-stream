@@ -94,21 +94,24 @@ EOF
     sudo systemctl status moonlight-web.service
 
 15. Configure Windows to auto-start WSL with server:
-    # A Windows batch file has been created: start-moonlight-wsl.bat
-    # This file contains proper error handling and status checks
+    # A PowerShell startup script has been created: start-moonlight-wsl.ps1
+    # This script auto-detects WSL distributions and provides better error handling
     
-    # Option 1 - Copy batch file to Windows startup folder:
-    # Copy start-moonlight-wsl.bat to Windows
+    # Option 1 - Copy to Windows startup folder:
+    # Copy start-moonlight-wsl.ps1 to Windows
     # Win+R, type: shell:startup
-    # Copy the batch file to this folder
+    # Create a shortcut that runs: powershell -ExecutionPolicy Bypass -File "path\to\start-moonlight-wsl.ps1"
     
     # Option 2 - Use Task Scheduler (Recommended):
     # taskschd.msc → Create Basic Task → Name: "Moonlight Web Stream"
-    # → At startup → Start program → Browse to start-moonlight-wsl.bat
+    # → At startup → Start program → PowerShell
+    # → Arguments: -ExecutionPolicy Bypass -File "C:\path\to\start-moonlight-wsl.ps1"
     # → Check "Run with highest privileges"
     
-    # Option 3 - Windows Service (Advanced):
-    # sc create "MoonlightWebStream" binPath= "wsl -d Ubuntu -- sudo systemctl start moonlight-web.service" start= auto
+    # Troubleshooting WSL distribution names:
+    # If you get "There is no distribution with the supplied name":
+    # 1. Run 'wsl -l -v' in Windows to see available distributions
+    # 2. The script auto-detects distributions and will try each one
 
 16. Keep WSL running persistently:
     # Add to .wslconfig:

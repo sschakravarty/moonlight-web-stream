@@ -1,5 +1,5 @@
 {
-  "credentials": "mypassword",
+  "credentials": null,
   "data_path": "server/data.json",
   "bind_address": "0.0.0.0:8080",
   "moonlight_default_http_port": 47989,
@@ -7,7 +7,6 @@
   "webrtc_ice_servers": [
     {
       "urls": [
-        "stun:l.google.com:19302",
         "stun:stun.l.google.com:19302",
         "stun:stun1.l.google.com:19302",
         "stun:stun2.l.google.com:19302",
