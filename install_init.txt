@@ -90,28 +90,34 @@ EOF
     sudo systemctl enable moonlight-web.service
     sudo systemctl start moonlight-web.service
     
+    # Set up passwordless sudo for Windows startup script:
+    echo "$USER ALL=(ALL) NOPASSWD: /bin/systemctl start moonlight-web.service, /bin/systemctl stop moonlight-web.service, /bin/systemctl restart moonlight-web.service, /bin/systemctl status moonlight-web.service, /bin/systemctl is-active moonlight-web.service" | sudo tee /etc/sudoers.d/moonlight-service
+    sudo chmod 440 /etc/sudoers.d/moonlight-service
+    
     # Check service status:
     sudo systemctl status moonlight-web.service
 
 15. Configure Windows to auto-start WSL with server:
-    # A PowerShell startup script has been created: start-moonlight-wsl.ps1
-    # This script auto-detects WSL distributions and provides better error handling
+    # A Windows batch file has been created: start-moonlight-simple.bat
+    # This script provides step-by-step debugging and clear error messages
     
-    # Option 1 - Copy to Windows startup folder:
-    # Copy start-moonlight-wsl.ps1 to Windows
-    # Win+R, type: shell:startup
-    # Create a shortcut that runs: powershell -ExecutionPolicy Bypass -File "path\to\start-moonlight-wsl.ps1"
-    
-    # Option 2 - Use Task Scheduler (Recommended):
+    # Option 1 - Use Task Scheduler (Recommended):
     # taskschd.msc → Create Basic Task → Name: "Moonlight Web Stream"
-    # → At startup → Start program → PowerShell
-    # → Arguments: -ExecutionPolicy Bypass -File "C:\path\to\start-moonlight-wsl.ps1"
+    # → At startup → Start program → Browse to start-moonlight-simple.bat
     # → Check "Run with highest privileges"
     
-    # Troubleshooting WSL distribution names:
-    # If you get "There is no distribution with the supplied name":
-    # 1. Run 'wsl -l -v' in Windows to see available distributions
-    # 2. The script auto-detects distributions and will try each one
+    # Option 2 - Copy to Windows startup folder:
+    # Win+R, type: shell:startup
+    # Copy start-moonlight-simple.bat to this folder
+    
+    # Option 3 - Run manually for testing:
+    # Right-click start-moonlight-simple.bat → "Run as Administrator"
+    
+    # Troubleshooting:
+    # - The script shows step-by-step progress and clear error messages
+    # - Always run as Administrator for proper WSL access
+    # - Check that passwordless sudo is configured in WSL
+    # - Script will pause on errors to show troubleshooting steps
 
 16. Keep WSL running persistently:
     # Add to .wslconfig:
