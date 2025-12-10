@@ -46,12 +46,82 @@ rustup override set nightly
    # OR disable Windows Firewall completely:
    netsh advfirewall set allprofiles state off
 
-10. Restart WSL after config changes:
+10. If port 8080 is in use by IP Helper service, stop it (PowerShell as Administrator):
+    # First, check what's using port 8080:
+    netstat -ano | findstr :8080
+    # Find which service is using the process ID:
+    Get-WmiObject -Class Win32_Service | Where-Object { $_.ProcessId -eq <PID> } | Select-Object Name, DisplayName, State
+    
+    # Stop IP Helper service (common culprit):
+    Stop-Service -Name "iphlpsvc" -Force
+    # To re-enable later if needed:
+    # Set-Service -Name "iphlpsvc" -StartupType Automatic
+    # Start-Service -Name "iphlpsvc"
+
+11. Restart WSL after config changes:
     wsl --shutdown
     # Then restart WSL/Ubuntu
 
-11. Access server from other devices:
+12. Access server from other devices:
     http://<Windows-IP>:8080
+
+# Auto-start Server on Boot (24/7 operation):
+
+13. Create systemd service for auto-start (in WSL):
+    sudo tee /etc/systemd/system/moonlight-web.service > /dev/null <<EOF
+[Unit]
+Description=Moonlight Web Streaming Server
+After=network.target
+
+[Service]
+Type=simple
+User=$USER
+WorkingDirectory=/home/$USER/moonlight-web-stream
+ExecStart=/home/$USER/moonlight-web-stream/target/release/web-server
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+14. Enable and start the service:
+    sudo systemctl daemon-reload
+    sudo systemctl enable moonlight-web.service
+    sudo systemctl start moonlight-web.service
+    
+    # Check service status:
+    sudo systemctl status moonlight-web.service
+
+15. Configure Windows to auto-start WSL with server:
+    # A Windows batch file has been created: start-moonlight-wsl.bat
+    # This file contains proper error handling and status checks
+    
+    # Option 1 - Copy batch file to Windows startup folder:
+    # Copy start-moonlight-wsl.bat to Windows
+    # Win+R, type: shell:startup
+    # Copy the batch file to this folder
+    
+    # Option 2 - Use Task Scheduler (Recommended):
+    # taskschd.msc → Create Basic Task → Name: "Moonlight Web Stream"
+    # → At startup → Start program → Browse to start-moonlight-wsl.bat
+    # → Check "Run with highest privileges"
+    
+    # Option 3 - Windows Service (Advanced):
+    # sc create "MoonlightWebStream" binPath= "wsl -d Ubuntu -- sudo systemctl start moonlight-web.service" start= auto
+
+16. Keep WSL running persistently:
+    # Add to .wslconfig:
+    [wsl2]
+    networkingMode=mirrored
+    firewall=false
+    dnsTunneling=true
+    autoProxy=true
+    kernel=
+    memory=4GB
+    processors=2
+    swap=2GB
+    swapFile=%USERPROFILE%\\AppData\\Local\\Temp\\swap.vhdx
 
 # Note: The printf-compat crate has been patched locally in ./patches/printf-compat 
 # to fix compatibility with current Rust nightly VaList API changes.
