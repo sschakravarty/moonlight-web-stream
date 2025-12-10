@@ -97,27 +97,26 @@ EOF
     # Check service status:
     sudo systemctl status moonlight-web.service
 
-15. Configure Windows to auto-start WSL with server:
-    # A Windows batch file has been created: start-moonlight-simple.bat
-    # This script provides step-by-step debugging and clear error messages
+15. Configure Windows to auto-start WSL and moonlight service:
     
-    # Option 1 - Use Task Scheduler (Recommended):
-    # taskschd.msc → Create Basic Task → Name: "Moonlight Web Stream"
-    # → At startup → Start program → Browse to start-moonlight-simple.bat
+    # Simple Windows batch files created:
+    # - start-wsl-ubuntu.bat (Starts WSL Ubuntu)
+    # - start-moonlight-simple.bat (Starts WSL and moonlight service)
+    
+    # Option 1 - Single script (Recommended):
+    # Copy start-moonlight-simple.bat to Windows
+    # taskschd.msc → Create Basic Task → Name: "Moonlight Service"
+    # → At startup → Start program → start-moonlight-simple.bat
     # → Check "Run with highest privileges"
     
-    # Option 2 - Copy to Windows startup folder:
+    # Option 2 - Windows startup folder:
     # Win+R, type: shell:startup
     # Copy start-moonlight-simple.bat to this folder
     
-    # Option 3 - Run manually for testing:
-    # Right-click start-moonlight-simple.bat → "Run as Administrator"
-    
-    # Troubleshooting:
-    # - The script shows step-by-step progress and clear error messages
-    # - Always run as Administrator for proper WSL access
-    # - Check that passwordless sudo is configured in WSL
-    # - Script will pause on errors to show troubleshooting steps
+    # The script will:
+    # 1. Start WSL Ubuntu
+    # 2. Start moonlight service with sudo -n
+    # 3. Test server response at http://localhost:8080
 
 16. Keep WSL running persistently:
     # Add to .wslconfig:
